@@ -1,0 +1,2 @@
+lib/app/modules/movimentacoes/components/painel_saldo_controller.dart
+test/app/modules/movimentacoes/components/painel_saldo_controller_test.dart
