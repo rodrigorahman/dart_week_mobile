@@ -15,6 +15,7 @@ version: 1.0.0+1
 
 scripts:
   mobx_build: flutter pub run build_runner build --delete-conflicting-outputs
+  mobx_watch: flutter pub run build_runner watch
 
 environment:
   sdk: ">=2.1.0 <3.0.0"

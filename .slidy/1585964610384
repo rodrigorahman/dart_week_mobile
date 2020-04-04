@@ -1,0 +1,4 @@
+lib/app/modules/movimentacoes/components/cadastrar_movimentacao/cadastrar_movimentacao_widget.dart
+test/app/modules/movimentacoes/components/cadastrar_movimentacao/cadastrar_movimentacao_widget_test.dart
+lib/app/modules/movimentacoes/components/cadastrar_movimentacao/cadastrar_movimentacao_controller.dart
+test/app/modules/movimentacoes/components/cadastrar_movimentacao/cadastrar_movimentacao_controller_test.dart

@@ -1,11 +1,16 @@
+import 'dart:io';
+
+import 'package:dart_week_mobile/app/core/store_state.dart';
 import 'package:dart_week_mobile/app/modules/movimentacoes/components/painel_saldo/painel_saldo_controller.dart';
 import 'package:dart_week_mobile/app/utils/size_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:intl/intl.dart';
+import 'package:mobx/mobx.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 
 class PainelSaldoWidget extends StatefulWidget {
-  
   final double appBarHeight;
 
   const PainelSaldoWidget({Key key, this.appBarHeight}) : super(key: key);
@@ -15,29 +20,61 @@ class PainelSaldoWidget extends StatefulWidget {
 }
 
 class _PainelSaldoWidgetState extends ModularState<PainelSaldoWidget, PainelSaldoController> {
+  
+  List<ReactionDisposer> disposers;
+
+  @override
+  void initState() {
+    super.initState();
+    disposers ??=[
+      reaction((_) => controller.data, (_) => controller.buscarTotalDoMes())
+    ];
+    controller.buscarTotalDoMes();
+  }
+  
   @override
   Widget build(BuildContext context) {
-    return SlidingSheet(
-      elevation: 8,
-      cornerRadius: 30,
-      snapSpec: SnapSpec(snap: true, snappings: [0.1, 0.4], positioning: SnapPositioning.relativeToAvailableSpace),
-      headerBuilder: (_, state) {
-        return Container(
-          width: 60,
-          height: 5,
-          decoration: BoxDecoration(
-            color: Colors.grey,
-            borderRadius: BorderRadius.circular(20),
-          ),
-        );
-      },
-      builder: (_, state) {
-        return _makeContent();
-      },
-    );
+      return SlidingSheet(
+        elevation: 8,
+        cornerRadius: 30,
+        snapSpec: SnapSpec(snap: true, snappings: [0.1, 0.4], positioning: SnapPositioning.relativeToAvailableSpace),
+        headerBuilder: (_, state) {
+          return Container(
+            width: 60,
+            height: 5,
+            decoration: BoxDecoration(
+              color: Colors.grey,
+              borderRadius: BorderRadius.circular(20),
+            ),
+          );
+        },
+        builder: (_, state) {
+          return Observer(builder: (_) {
+            switch (controller.totalsTate) {
+                case StoreState.initial:
+                case StoreState.loading:
+                  return Container(
+                    height: SizeUtils.heightScreen,
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      margin: EdgeInsets.only(top: 30),
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                case StoreState.loaded:
+                  return _makeContent();
+                case StoreState.error:
+                  return Text(controller.errorMessage);
+              }
+              return Container();
+          });
+        },
+      );
   }
 
   Widget _makeContent() {
+    var model = controller.movimentacaoTotalModel;
+    var numberFormat = NumberFormat('###.00', 'pt_BR');
     return Container(
       width: SizeUtils.widthScreen,
       height: SizeUtils.heightScreen * .4 - widget.appBarHeight,
@@ -47,17 +84,33 @@ class _PainelSaldoWidgetState extends ModularState<PainelSaldoWidget, PainelSald
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[IconButton(icon: Icon(Icons.arrow_back_ios)), Text('Janeiro/2020', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Colors.green)), IconButton(icon: Icon(Icons.arrow_forward_ios))],
+            children: <Widget>[
+              IconButton(
+                onPressed: () => controller.previousMonth(),
+                icon: Icon(Icons.arrow_back_ios),
+              ),
+              Text(
+                DateFormat.yMMMM('pt_BR').format(controller.data),
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, 
+                color: model.saldo < 0 ? Colors.red : Colors.green),
+              ),
+              IconButton(
+                onPressed: () => controller.nextMonth(),
+                icon: Icon(Icons.arrow_forward_ios),
+              ),
+            ],
           ),
           SizedBox(
-            height: 60,
+            // height: Platform.isIOS ? 60 : 30,
+            height: Platform.isIOS ? 60 : 30,
           ),
           Column(
             children: <Widget>[
               Text('Saldo'),
               Text(
-                'R\$ 3000,00',
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.green),
+                'R\$ ${model.saldo != null ? numberFormat.format(model.saldo) : '-'}',
+                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, 
+                color: model.saldo < 0 ? Colors.red : Colors.green),
               )
             ],
           ),
@@ -65,7 +118,7 @@ class _PainelSaldoWidgetState extends ModularState<PainelSaldoWidget, PainelSald
             child: Container(),
           ),
           Container(
-            margin: EdgeInsets.only(bottom: 30),
+            margin: EdgeInsets.only(bottom: Platform.isIOS ? 30 : 10),
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -91,7 +144,7 @@ class _PainelSaldoWidgetState extends ModularState<PainelSaldoWidget, PainelSald
                           ),
                         ),
                         Text(
-                          'R\$ 200',
+                          'R\$ ${numberFormat.format(model.receitas.total)}',
                           style: TextStyle(fontSize: 14, color: Color(0xFF4BCE97)),
                         ),
                       ],
@@ -119,7 +172,7 @@ class _PainelSaldoWidgetState extends ModularState<PainelSaldoWidget, PainelSald
                           ),
                         ),
                         Text(
-                          'R\$ 200',
+                          'R\$ ${numberFormat.format(model.despesas.total)}',
                           style: TextStyle(fontSize: 14, color: Colors.red),
                         ),
                       ],

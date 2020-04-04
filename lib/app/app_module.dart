@@ -1,4 +1,5 @@
 import 'package:dart_week_mobile/app/app_controller.dart';
+import 'package:dart_week_mobile/app/repositories/usuario_repository.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter/material.dart';
 import 'package:dart_week_mobile/app/app_widget.dart';
@@ -11,6 +12,7 @@ class AppModule extends MainModule {
   @override
   List<Bind> get binds => [
         Bind((i) => AppController()),
+        Bind((i) => UsuarioRepository())
       ];
 
   @override

@@ -10,12 +10,14 @@ class ControleJaTextFormField extends TextFormField {
     double fontSize,
     EdgeInsets padding,
     TextEditingController controller,
+    IconData icon,
   }) : super(
           controller: controller,
           onChanged: onChanged,
           validator: validator,
           obscureText: obscureText ?? false,
           decoration: InputDecoration(
+            prefixIcon: icon != null ? Icon(icon) : null,
             contentPadding: padding ?? EdgeInsets.only(left: 30, top: 20, bottom: 20),
             labelText: label,
             labelStyle: TextStyle(
