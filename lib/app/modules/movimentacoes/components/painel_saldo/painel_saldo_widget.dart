@@ -33,6 +33,12 @@ class _PainelSaldoWidgetState extends ModularState<PainelSaldoWidget, PainelSald
   }
   
   @override
+  void dispose() {
+    super.dispose();
+    disposers.forEach((d) => d());
+  }
+
+  @override
   Widget build(BuildContext context) {
       return SlidingSheet(
         elevation: 8,

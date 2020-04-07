@@ -49,9 +49,26 @@ class _MovimentacoesPageState extends ModularState<MovimentacoesPage, Movimentac
             controller.painelSaldoController.buscarTotalDoMes();
             break;
         }
+      }),
+      reaction((_) => cadastrarController.categoriasStatus, (categoriaStatus) {
+        switch(categoriaStatus) {
+          case StoreState.loading:
+            showLoader();
+            break;
+          case StoreState.loaded:
+            hideLoader();
+            _showInsertModal();
+            break;
+        }
       })
     ];
     controller.buscarMovimentacoes();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    disposers.forEach((d) => d());
   }
 
   @override
@@ -63,8 +80,7 @@ class _MovimentacoesPageState extends ModularState<MovimentacoesPage, Movimentac
         PopupMenuButton<String>(
           icon: Icon(Icons.add),
           onSelected: (item){
-            Modular.get<CadastrarMovimentacaoController>().buscarCategorias(item);
-            _showInsertModal();
+            cadastrarController.buscarCategorias(item);
           },
           itemBuilder: (_) {
             return [
@@ -140,10 +156,8 @@ class _MovimentacoesPageState extends ModularState<MovimentacoesPage, Movimentac
   }
 
   _showInsertModal() {
-    cadastrarController.changeCategoria(null);
-    cadastrarController.changeDescricao('');
-    cadastrarController.moneyController.text = '';
-    cadastrarController.categoriaValid = true;
+    
+    cadastrarController.resetForm();
     
     Get.dialog(
       AlertDialog(

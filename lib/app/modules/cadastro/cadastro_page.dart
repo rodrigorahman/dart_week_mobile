@@ -18,7 +18,7 @@ class CadastroPage extends StatefulWidget {
   _CadastroPageState createState() => _CadastroPageState();
 }
 
-class _CadastroPageState extends ModularState<CadastroPage, CadastroController>  with LoaderMixin{
+class _CadastroPageState extends ModularState<CadastroPage, CadastroController> with LoaderMixin {
   //use 'controller' variable to access controller
   List<ReactionDisposer> disposers;
   AppBar appBar = AppBar(
@@ -28,8 +28,8 @@ class _CadastroPageState extends ModularState<CadastroPage, CadastroController> 
   @override
   void initState() {
     super.initState();
-      disposers ??= [
-       reaction((_) => controller.state, (StoreState state) {
+    disposers ??= [
+      reaction((_) => controller.state, (StoreState state) {
         print(state);
         if (state == StoreState.loading) {
           showLoader();
@@ -50,11 +50,17 @@ class _CadastroPageState extends ModularState<CadastroPage, CadastroController> 
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    disposers.forEach((d) => d());
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBar,
       body: SingleChildScrollView(
-              child: Column(
+        child: Column(
           children: <Widget>[
             _makeHeader(),
             SizedBox(
@@ -95,7 +101,7 @@ class _CadastroPageState extends ModularState<CadastroPage, CadastroController> 
               label: 'Login',
               onChanged: controller.changeLogin,
               validator: (String valor) {
-                if(valor.isEmpty) {
+                if (valor.isEmpty) {
                   return 'Login obrigatório';
                 }
                 return null;
@@ -108,7 +114,7 @@ class _CadastroPageState extends ModularState<CadastroPage, CadastroController> 
               label: 'Senha',
               onChanged: controller.changeSenha,
               validator: (String valor) {
-                if(valor.isEmpty) {
+                if (valor.isEmpty) {
                   return 'Login obrigatório';
                 }
                 return null;
@@ -121,11 +127,11 @@ class _CadastroPageState extends ModularState<CadastroPage, CadastroController> 
               label: 'Confirma Senha',
               onChanged: controller.changeConfirmaSenha,
               validator: (String valor) {
-                if(valor.isNotEmpty) {
-                  if(valor != controller.senha) {
+                if (valor.isNotEmpty) {
+                  if (valor != controller.senha) {
                     return 'Senha diferente de confirma senha';
                   }
-                }else {
+                } else {
                   return 'Confirma Senha Obrigatória';
                 }
 

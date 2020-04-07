@@ -19,6 +19,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends ModularState<LoginPage, LoginController> with LoaderMixin {
+  
   List<ReactionDisposer> _disposer;
 
   @override
@@ -54,6 +55,12 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> with Load
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    _disposer.forEach((d) => d());
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
@@ -72,7 +79,7 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> with Load
     return Container(
       color: ThemeUtils.primaryColor,
       width: SizeUtils.widthScreen,
-      height: (SizeUtils.heightScreen * .5) - SizeUtils.statusBarHeight,
+      height: (SizeUtils.heightScreen * .5),
       child: Stack(
         alignment: Alignment.center,
         children: <Widget>[

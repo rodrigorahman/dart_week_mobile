@@ -17,18 +17,16 @@ class _HomePageState extends ModularState<HomePage, HomeController> {
   //use 'controller' variable to access controller
 
   @override
+  void initState() { 
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => controller.verificaLogado());
+  }
+
+  @override
   Widget build(BuildContext context) {
 
     ThemeUtils.init(context);
     SizeUtils.init(context);
-
-    Future.delayed(Duration.zero, () async {
-      if(await Modular.get<UsuarioRepository>().isLogged()){
-        Get.offAllNamed('/movimentacoes');
-      }else{
-        Get.offAllNamed('/login');
-      }
-    } );
 
     return Scaffold(
       appBar: AppBar(

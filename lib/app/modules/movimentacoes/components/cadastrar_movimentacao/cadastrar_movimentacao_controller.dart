@@ -62,7 +62,6 @@ abstract class _CadastrarMovimentacaoControllerBase with Store {
   @computed
   StoreState get categoriasStatus => StoreUtils.statusCheck(_categoriasFuture);
 
-
   @action
   Future<void> buscarCategorias(String tipo) async {
     try {
@@ -98,7 +97,7 @@ abstract class _CadastrarMovimentacaoControllerBase with Store {
           );
           await _salvarMovimentacaoFuture;
         }
-      }else {
+      } else {
         if (categoria == null) {
           categoriaValid = false;
         }
@@ -108,4 +107,11 @@ abstract class _CadastrarMovimentacaoControllerBase with Store {
     }
   }
 
+  @action
+  resetForm() {
+    changeCategoria(null);
+    changeDescricao('');
+    moneyController.text = '';
+    categoriaValid = true;
+  }
 }
